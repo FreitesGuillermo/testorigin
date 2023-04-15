@@ -1,0 +1,46 @@
+//////////////////
+// paso 1 crear foto escena 
+// nota: el token de acceso tiene que tener permisos de write
+// scenename tiene que ser un nombre unico 
+// obj es el formato admitido probado que s ele puede hacer derivatiba 
+// otros formatos rcm, rcs, obj, fbx y ortho
+//////////////////
+curl -v 'https://developer.api.autodesk.com/photo-to-3d/v1/photoscene'
+  -X 'POST'
+  -H 'Authorization: Bearer ${toke_access}'
+  -d 'scenename=pruebaObj'
+  -d 'format=obj'
+//////////////////
+// paso 2 una ves obtenido $photosceneID'
+// se procese a cargar las img en lotes de 20 
+// nota siempre se debe usar el mismo phosheneid 
+/////////////////
+curl -v 'https://developer.api.autodesk.com/photo-to-3d/v1/file'
+  -X 'POST'
+  -H 'Authorization: Bearer ${token_access}'
+  -F "photosceneid=${photosceneID}"
+  -F "type=image"
+  -F "file[0]=https://raw.githubusercontent.com/FreitesGuillermo/FreitesGuillermo/main/Archive/DSC_5427.JPG"
+  -F "file[1]=https://raw.githubusercontent.com/FreitesGuillermo/FreitesGuillermo/main/Archive/DSC_5428.JPG"
+  ////////////////
+  //paso 3 procesar foto scena 
+  //
+  ////////////////
+  curl -v 'https://developer.api.autodesk.com/photo-to-3d/v1/photoscene/photosceneID'
+  -X 'POST'
+  -H 'Authorization: Bearer ${token_access}'
+  /////////////////
+  // paso 4 esperar a que se prosece (100%)
+  //
+  /////////////////
+  curl -v 'https://developer.api.autodesk.com/photo-to-3d/v1/photoscene/photosceneID/progress'
+  -X 'GET'
+  -H 'Authorization: Bearer ${token_access}'
+  ////////////////
+  //paso 5 solcitar las fotos procesadas 
+  //nota solo se puede solcitar el tipo de dato que se especifico en el paso 1
+  //se obtiene un enlace que dura 7 dias en amazon  y una ves pasado ese tiempo se desaparace 
+  ////////////////
+  curl -v 'https://developer.api.autodesk.com/photo-to-3d/v1/photoscene/photosceneID?format=obj'
+  -X 'GET'
+  -H 'Authorization: Bearer ${access_token}'
